@@ -64,15 +64,16 @@ def get_review (link):
     response = urlopen(req).read()
     soup = BeautifulSoup(response,"lxml")
     beer_name, brewer, source = soup.title.text.split(' | ')
-    review = BeautifulSoup(re.findall(b'[\d%]+</span><br><br>([\s\S]*?)characters', response)[0],"lxml").text
-    
+    review = BeautifulSoup(re.findall(b'[\d%]+</span><br><br>([\s\S]*?)characters', response)[0],"lxml").text.replace('"',"'")
+    beer_name = beer_name.replace('"',"'")
+
     return beer_name, source, review, brewer
 
 def main (db_info):
     conn = get_conn(db_info)
     cur = init_cur(conn)
     user_list = find_notable()
-    for user in tqdm(user_list[243:244]):
+    for user in tqdm(user_list[242:243]):
         review_link = get_review_link(user)
         for link in tqdm(review_link):
             connected = False
@@ -84,8 +85,6 @@ def main (db_info):
                     print(err.reason)
                     print(link)
                     sleep(60)
-            review = review.replace('"',"'")
-            beer_name = beer_name.replace('"',"'")
             query = """INSERT INTO beer_reviews 
                     VALUES ("{source}", "{user_name}","{beer_name}","{brewer}","{review}")""".format(source=source,user_name=user,review=review,beer_name=beer_name,brewer=brewer)
             cur.execute(query)
