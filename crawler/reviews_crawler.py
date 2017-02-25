@@ -73,7 +73,7 @@ def main (db_info):
     conn = get_conn(db_info)
     cur = init_cur(conn)
     user_list = find_notable()
-    for user in tqdm(user_list[242:243]):
+    for user in tqdm(user_list[243::]): #242
         review_link = get_review_link(user)
         for link in tqdm(review_link):
             connected = False
