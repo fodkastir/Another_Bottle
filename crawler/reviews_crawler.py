@@ -39,8 +39,7 @@ def get_review_link (user):
     url = 'https://www.beeradvocate.com/user/beers/?start=0&&ba={user}'.format(user=user)
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     response = urlopen(req).read()
-    pattern = re.compile(b'Ratings:\s([\d]*?)\s')
-    rev_num = int(re.findall(pattern, response)[0])
+    rev_num = int(re.findall(b'Ratings:\s([\d]*?)\s', response)[0])
     
     review_list = []
     for start in range(0,rev_num,50):
@@ -65,8 +64,7 @@ def get_review (link):
     response = urlopen(req).read()
     soup = BeautifulSoup(response,"lxml")
     beer_name, brewer, source = soup.title.text.split(' | ')
-    pattern = re.compile(b'[\d%]+</span><br><br>([\s\S]*?)characters')
-    review = BeautifulSoup(re.findall(pattern, response)[0],"lxml").text
+    review = BeautifulSoup(re.findall(b'[\d%]+</span><br><br>([\s\S]*?)characters', response)[0],"lxml").text
     
     return beer_name, source, review, brewer
 
@@ -74,7 +72,7 @@ def main (db_info):
     conn = get_conn(db_info)
     cur = init_cur(conn)
     user_list = find_notable()
-    for user in tqdm(user_list[0:245]):
+    for user in tqdm(user_list[243:244]):
         review_link = get_review_link(user)
         for link in tqdm(review_link):
             connected = False
@@ -101,5 +99,4 @@ db_info = {'HOST':'yen-6740db.czewfafbu0y5.us-east-1.rds.amazonaws.com',
            'DB':'beer_db',}
 
 if __name__ == '__main__':
-    main (db_info)
-    
+    main (db_info) 
