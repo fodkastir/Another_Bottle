@@ -44,7 +44,7 @@ def get_bottlelist (style_link):
     bottle_list = [] 
     for start in range(0,bottle_num,50):
         bottles = []
-        url = 'https://www.beeradvocate.com' + style[1] + '?sort=revsD&start={start}'.format(start=start)
+        url = 'https://www.beeradvocate.com' + style_link + '?sort=revsD&start={start}'.format(start=start)
         req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         response = urlopen(req)
         soup = BeautifulSoup(response.read(),"lxml")
@@ -88,7 +88,7 @@ def main (db_info):
     conn = get_conn(db_info)
     cur = init_cur(conn)
     style_list = get_stylelist ()
-    for style in tqdm(style_list[-1:]):
+    for style in tqdm(style_list[-5:-1]): #-5
         bottle_list = get_bottlelist (style[1])
         for bottle in tqdm(bottle_list):
             bottle_name = bottle[0]
