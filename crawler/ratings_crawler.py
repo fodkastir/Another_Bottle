@@ -63,7 +63,8 @@ def get_bottleinfo (bottle_link):
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     response = urlopen(req).read()
     soup = BeautifulSoup(response,"lxml")
-    abv = float(re.findall(b'(\d\.\d\d)%', response)[0])
+    try:abv = float(re.findall(b'(\d\.\d\d)%', response)[0])
+    except:abv = 0
     rating_num = int(re.findall(b'"ba-reviews">([\d,]*?)</span>', response)[0].decode('UTF-8').replace(',',''))
     pattern = re.compile(b'Description:</b>\n\t\t<br>\n\t\t([A-Za-z\s\w\W.]*?)<br><br>Added')
     note = BeautifulSoup(re.findall(pattern, response)[0],"lxml").text.replace('"',"'")
