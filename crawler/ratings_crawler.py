@@ -85,7 +85,7 @@ def main (db_info):
     conn = get_conn(db_info)
     cur = init_cur(conn)
     style_list = get_stylelist ()
-    for style in tqdm(style_list[-15:-10]): 
+    for style in tqdm(style_list): 
         bottle_list = get_bottlelist (style[1])
         for bottle in tqdm(bottle_list):
             bottle_name = bottle[0]
