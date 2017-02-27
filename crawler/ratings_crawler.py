@@ -78,7 +78,7 @@ def get_ratings(link, bottle_name, source, start, brewer):
     url = 'https://www.beeradvocate.com' + link + '?sort=revsD&start={start}'.format(start=start)
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     response = urlopen(req).read()
-    pattern = re.compile(b'(look\:[\s\S]+?\d)</span><br><br>[\s\S]+?"username">([\s\S]+?)</a>\,')
+    pattern = re.compile(b'\>(look\:[\s\S]+?\d)</span><br><br>[\s\S]+?"username">([\s\S]+?)</a>\,')
     
     return [(source, soup[1], bottle_name, brewer, *re.findall(b'[\d.]+',soup[0])) for soup in re.findall(pattern, response) if len(soup[1]) < 50]
 
