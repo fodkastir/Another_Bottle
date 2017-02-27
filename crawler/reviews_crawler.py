@@ -63,11 +63,11 @@ def get_review (link):
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     response = urlopen(req).read()
     soup = BeautifulSoup(response,"lxml")
-    beer_name, brewer, source = soup.title.text.split(' | ')
-    review = BeautifulSoup(re.findall(b'[\d%]+</span><br><br>([\s\S]*?)characters', response)[0],"lxml").text.replace('"',"'")
-    beer_name = beer_name.replace('"',"'")
+    bottle_name, brewer, source = soup.title.text.split(' | ')
+    review = BeautifulSoup(re.findall(b'rDev[\s\S]*?<br><br>([\s\S]*?)characters', response)[0],"lxml").text.replace('"',"'")
+    bottle_name = bottle_name.replace('"',"'")
 
-    return beer_name, source, review, brewer
+    return bottle_name, source, review, brewer
 
 def main (db_info):
     conn = get_conn(db_info)
@@ -79,14 +79,14 @@ def main (db_info):
             connected = False
             while not connected:
                 try:
-                    beer_name, source, review, brewer = get_review (link)
+                    bottle_name, source, review, brewer = get_review (link)
                     connected = True
                 except urllib.error.URLError as err:
                     print(err.reason)
                     print(link)
                     sleep(60)
             query = """INSERT INTO beer_reviews 
-                    VALUES ("{source}", "{user_name}","{beer_name}","{brewer}","{review}")""".format(source=source,user_name=user,review=review,beer_name=beer_name,brewer=brewer)
+                    VALUES ("{source}", "{user_name}","{bottle_name}","{brewer}","{review}")""".format(source=source,user_name=user,review=review,bottle_name=bottle_name,brewer=brewer)
             cur.execute(query)
             conn.commit()
     conn.close()

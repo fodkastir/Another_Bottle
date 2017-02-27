@@ -68,10 +68,10 @@ def get_bottleinfo (bottle_link):
     rating_num = int(re.findall(b'"ba-reviews">([\d,]*?)</span>', response)[0].decode('UTF-8').replace(',',''))
     pattern = re.compile(b'Description:</b>\n\t\t<br>\n\t\t([A-Za-z\s\w\W.]*?)<br><br>Added')
     note = BeautifulSoup(re.findall(pattern, response)[0],"lxml").text.replace('"',"'")
-    beer_name, brewer, source = soup.title.text.split(' | ')
-    beer_name = beer_name.replace('"',"'")
+    bottle_name, brewer, source = soup.title.text.split(' | ')
+    bottle_name = bottle_name.replace('"',"'")
     
-    return abv, note, rating_num, brewer, source
+    return abv, note, rating_num, brewer, source, bottle_name
 
 def get_ratings(link, bottle_name, source, start, brewer):
     
@@ -89,10 +89,9 @@ def main (db_info):
     for style in tqdm(style_list): 
         bottle_list = get_bottlelist (style[1])
         for bottle in tqdm(bottle_list):
-            bottle_name = bottle[0]
-            abv, note, rating_num, brewer, source = get_bottleinfo(bottle[1])
+            abv, note, rating_num, brewer, source, bottle_name = get_bottleinfo(bottle[1])
             query = """INSERT INTO beer_info 
-                        VALUES ("{source}", "{beer_name}","{brewer}","{style}",{abv},"{note}")""".format(source=source,beer_name=bottle[0],brewer=brewer,style=style[0],abv=abv,note=note)
+                        VALUES ("{source}", "{bottle_name}","{brewer}","{style}",{abv},"{note}")""".format(source=source,bottle_name=bottle_name,brewer=brewer,style=style[0],abv=abv,note=note)
             cur.execute(query)
             conn.commit()
             
@@ -101,7 +100,7 @@ def main (db_info):
             for start in tqdm(range(0,rating_num,25)):
                 result = get_ratings(bottle[1], bottle[0], source, start, brewer)
                 cur.executemany(
-                    """INSERT INTO ratings (source, user_name, beer_name, brewer, look, smell, taste, feel, overall)
+                    """INSERT INTO ratings (source, user_name, bottle_name, brewer, look, smell, taste, feel, overall)
                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",result)
                 conn.commit()
     conn.close()
