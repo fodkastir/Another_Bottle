@@ -98,7 +98,7 @@ def main (db_info):
             if rating_num < 10:break
             
             for start in tqdm(range(0,rating_num,25)):
-                result = get_ratings(bottle[1], bottle[0], source, start, brewer)
+                result = get_ratings(bottle[1], bottle_name, source, start, brewer)
                 cur.executemany(
                     """INSERT INTO ratings (source, user_name, bottle_name, brewer, look, smell, taste, feel, overall)
                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",result)
