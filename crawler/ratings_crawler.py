@@ -76,19 +76,16 @@ def get_ratings(link, bottle_name, source, start, brewer):
     
     url = 'https://www.beeradvocate.com' + link + '?sort=revsD&start={start}'.format(start=start)
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    response = urlopen(req)
-    soup = BeautifulSoup(response.read(),"lxml")
-    user_list = [node.findAll(text=True) for node in soup.findAll('a', { 'class':'username'})]
-    user_list = [str(user[0]) for user in user_list if user != []]
-    ratings = [re.findall('[\d.]+',soup.text) for soup in soup.findAll('span', { 'class':'muted'}) if 'look' in str(soup) and 'overall' in str(soup)]
+    response = urlopen(req).read()
+    pattern = re.compile(b'(look\:[\s\S]+?\d)</span><br><br>[\s\S]+?"username">([\s\S]+?)</a>\,')
     
-    return [(source, user, bottle_name, brewer,*rating) for user, rating in zip(user_list,ratings)]
+    return [(source, soup[1], bottle_name, brewer, *re.findall(b'[\d.]+',soup[0])) for soup in re.findall(pattern, response) if len(soup[1]) < 50]
 
 def main (db_info):
     conn = get_conn(db_info)
     cur = init_cur(conn)
     style_list = get_stylelist ()
-    for style in tqdm(style_list[-6:-5]): 
+    for style in tqdm(style_list[-15:-10]): 
         bottle_list = get_bottlelist (style[1])
         for bottle in tqdm(bottle_list):
             bottle_name = bottle[0]
