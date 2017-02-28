@@ -85,8 +85,9 @@ def main (db_info):
                     print(err.reason)
                     print(link)
                     sleep(60)
-            try:query = """INSERT INTO beer_reviews 
-                    VALUES ("{source}", "{user_name}","{bottle_name}","{brewer}","{review}")""".format(source=source,user_name=user,review=review,bottle_name=bottle_name,brewer=brewer)
+            try:
+                query = """INSERT INTO beer_reviews 
+                VALUES ("{source}", "{user_name}","{bottle_name}","{brewer}","{review}")""".format(source=source,user_name=user,review=review,bottle_name=bottle_name,brewer=brewer)
                 cur.execute(query)
                 conn.commit()
             except:continue
