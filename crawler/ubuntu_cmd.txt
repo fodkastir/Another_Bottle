@@ -5,7 +5,10 @@ source py3env/bin/activate
 pip install tqdm
 pip install bs4
 pip install pymysql
-pip install pymysql lxml
+pip install lxml
 git clone https://github.com/fodkastir/ISyE_6740_project.git
-cd ISyE_6740_project
+cd ISyE_6740_project 
 cd crawler
+screen
+screen -ls
+screen -r
