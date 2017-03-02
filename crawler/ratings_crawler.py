@@ -107,8 +107,8 @@ def main (db_info):
 
 db_info = {'HOST':'yen-6740db.czewfafbu0y5.us-east-1.rds.amazonaws.com',
            'PORT':3306,
-           'USER':'fodkastir',
-           'PASSWD':'fodka1234stir',
+           'USER':'',
+           'PASSWD':'',
            'DB':'beer_db',}
 
 if __name__ == '__main__':
